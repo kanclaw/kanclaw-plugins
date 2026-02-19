@@ -33,7 +33,7 @@ This plugin connects Claude Code to your KanClaw board, giving agents:
 ### 1. Install the plugin
 
 ```
-/plugin marketplace add kanclaw/claude-plugins
+/plugin marketplace add kanclaw/kanclaw-plugins
 /plugin install kanclaw
 ```
 
@@ -93,7 +93,7 @@ Pick task → /worktree → Code → /done → Review → Merge → Release
 
 ### `/setup-kc [api-key]`
 
-Set up KanClaw MCP server connection. Interactive — prompts for API key and environment.
+Set up KanClaw MCP server connection. Prompts for your API key and generates `.mcp.json`.
 
 ### `/worktree [task-id]`
 
@@ -133,7 +133,7 @@ Create a PR with KanClaw context (lighter than `/done` — no status change).
 
 ## MCP Tools Overview
 
-The KanClaw MCP server provides **32 tools** and **3 resources**:
+The KanClaw MCP server provides **37 tools** and **3 resources**:
 
 | Category | Count | Key tools |
 |----------|-------|-----------|
@@ -145,6 +145,7 @@ The KanClaw MCP server provides **32 tools** and **3 resources**:
 | Epics | 4 | `list_epics`, `create_epic`, `update_epic`, `delete_epic` |
 | Releases | 3 | `create_release`, `list_releases`, `get_release` |
 | Context Docs | 4 | `list_docs`, `get_doc`, `get_role_context`, `update_doc` |
+| Workflow | 5 | `claim_task`, `release_task`, `get_next_task`, `set_branch`, `get_workflow_status` |
 | GitHub | 2 | `link_pr`, `get_pr_status` (stubs) |
 
 **Resources:** `kanclaw://board/{slug}` · `kanclaw://docs` · `kanclaw://activity`

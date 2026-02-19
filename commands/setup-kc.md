@@ -21,25 +21,17 @@ Read `.mcp.json` in the project root (find it with `git rev-parse --show-topleve
 
 ### 2. Get the API key
 
-If the user passed an API key as an argument, use that. Otherwise, ask:
+If the user passed an API key as an argument, use that. Otherwise, ask directly:
 
-> What's your KanClaw API key? You can find it in **Project Settings → API Keys** at kanclaw.com.
+> Paste your KanClaw API key (from **Project Settings → API Keys** at kanclaw.com):
 
-The key typically starts with `kc_`. Accept whatever they provide.
+Accept whatever they provide — the key typically starts with `kc_`.
 
-### 3. Ask for the MCP URL
-
-Ask the user which environment to connect to:
-
-| Option | URL |
-|--------|-----|
-| **Production** (default) | `https://mcp.kanclaw.com/mcp` |
-| **Local development** | `http://localhost:8788/mcp` |
-| Custom | Ask for the full URL |
-
-### 4. Write .mcp.json
+### 3. Write .mcp.json
 
 Build the config object. If `.mcp.json` already exists, parse it and merge — don't overwrite other servers.
+
+Always use the production MCP URL: `https://mcp.kanclaw.com/mcp`
 
 The kanclaw entry format:
 
@@ -48,7 +40,7 @@ The kanclaw entry format:
   "mcpServers": {
     "kanclaw": {
       "type": "http",
-      "url": "THE_URL",
+      "url": "https://mcp.kanclaw.com/mcp",
       "headers": {
         "Authorization": "Bearer THE_API_KEY"
       }
@@ -59,7 +51,7 @@ The kanclaw entry format:
 
 Write the file to the project root using the Write tool. Pretty-print with 2-space indentation.
 
-### 5. Confirm
+### 4. Confirm
 
 Tell the user:
 - `.mcp.json` has been created/updated with the KanClaw MCP server
