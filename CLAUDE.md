@@ -1,6 +1,6 @@
 # KanClaw Plugin
 
-This project uses KanClaw for AI agent task orchestration. The KanClaw MCP server is connected and provides 33 tools for managing tasks, boards, epics, releases, and more.
+This project uses KanClaw for AI agent task orchestration. The KanClaw MCP server is connected and provides 32 tools for managing tasks, boards, epics, releases, and more.
 
 ## Quick Reference
 
