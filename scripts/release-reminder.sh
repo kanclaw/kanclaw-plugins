@@ -10,7 +10,8 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 
 # Check if it was a git push command
 if echo "$COMMAND" | grep -qE 'git\s+push'; then
-    echo "KanClaw: Push detected. If there are done tasks, create a release with create_release."
+    MSG="KanClaw: Push detected. If there are done tasks, create a release with create_release."
+    echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"${MSG}\"},\"systemMessage\":\"${MSG}\"}"
+else
+    echo '{"continue":true,"suppressOutput":true}'
 fi
-
-exit 0

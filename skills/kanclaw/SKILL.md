@@ -7,7 +7,27 @@ description: "KanClaw — AI-native Kanban board via MCP. Activates at session s
 
 KanClaw is a Kanban board for AI agent orchestration. You interact with it via MCP tools. Each API key is scoped to one project and optionally one agent role.
 
-The MCP server must be configured in your project's `.mcp.json` or user `~/.claude.json`. See the plugin README for setup instructions.
+## Setup
+
+The MCP server must be configured before KanClaw tools are available. Run `/setup-kc` to configure it interactively — it will ask for your API key and generate the `.mcp.json` file.
+
+If MCP tools (`get_board`, `list_tasks`, etc.) fail with connection errors, the MCP server is likely not configured. Guide the user to run `/setup-kc` or manually create `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "kanclaw": {
+      "type": "http",
+      "url": "https://mcp.kanclaw.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+API keys are created in **Project Settings → API Keys** at kanclaw.com. After writing `.mcp.json`, Claude Code must be restarted for the MCP server to connect.
 
 ## Board Workflow
 

@@ -1,0 +1,75 @@
+---
+name: setup-kc
+description: "Set up KanClaw MCP server connection — generates .mcp.json with your API key"
+argument-hint: "[api-key or leave blank to be prompted]"
+allowed-tools: Read, Write, Edit, Bash(cat *), AskUserQuestion
+---
+
+# /kanclaw:setup-kc
+
+Configure the KanClaw MCP server connection for this project.
+
+## Steps
+
+### 1. Check existing config
+
+Read `.mcp.json` in the project root (find it with `git rev-parse --show-toplevel` if needed).
+
+- If it exists **and** already has a `kanclaw` entry → tell the user it's already configured and ask if they want to reconfigure. If no, stop.
+- If it exists **without** a `kanclaw` entry → we'll add it (preserving other servers).
+- If it doesn't exist → we'll create it.
+
+### 2. Get the API key
+
+If the user passed an API key as an argument, use that. Otherwise, ask:
+
+> What's your KanClaw API key? You can find it in **Project Settings → API Keys** at kanclaw.com.
+
+The key typically starts with `kc_`. Accept whatever they provide.
+
+### 3. Ask for the MCP URL
+
+Ask the user which environment to connect to:
+
+| Option | URL |
+|--------|-----|
+| **Production** (default) | `https://mcp.kanclaw.com/mcp` |
+| **Local development** | `http://localhost:8788/mcp` |
+| Custom | Ask for the full URL |
+
+### 4. Write .mcp.json
+
+Build the config object. If `.mcp.json` already exists, parse it and merge — don't overwrite other servers.
+
+The kanclaw entry format:
+
+```json
+{
+  "mcpServers": {
+    "kanclaw": {
+      "type": "http",
+      "url": "THE_URL",
+      "headers": {
+        "Authorization": "Bearer THE_API_KEY"
+      }
+    }
+  }
+}
+```
+
+Write the file to the project root using the Write tool. Pretty-print with 2-space indentation.
+
+### 5. Confirm
+
+Tell the user:
+- `.mcp.json` has been created/updated with the KanClaw MCP server
+- `.mcp.json` is gitignored (contains secrets) — never commit it
+- **Restart Claude Code** for the MCP server to connect (MCP config is loaded at startup)
+- After restart, KanClaw tools like `get_board`, `list_tasks`, `move_task` will be available
+
+## Notes
+
+- Never commit `.mcp.json` — it contains the API key
+- If the user provides a key without the `kc_` prefix, use it as-is (it might be a different format)
+- Always use `"type": "http"` — not `"streamable-http"`
+- The Bearer prefix in the Authorization header is required
