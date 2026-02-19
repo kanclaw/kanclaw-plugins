@@ -1,38 +1,67 @@
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup|clear|compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh\"",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/release-reminder.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if you used any KanClaw MCP tools (move_task, add_comment, etc.) during this session. If you moved a task to 'in-progress' but never moved it to 'review' or 'done', remind the user in 1-2 sentences to update the task status and add a comment summarizing progress. If no KanClaw tasks were worked on, say nothing."
-          }
-        ]
-      }
-    ]
-  }
+	"hooks": {
+		"SessionStart": [
+			{
+				"matcher": "startup|clear|compact",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh\"",
+						"timeout": 10
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "EnterPlanMode",
+				"hooks": [
+					{
+						"type": "prompt",
+						"prompt": "Before entering plan mode: if you are working on a KanClaw task, ensure it has been moved to 'in-progress' column FIRST. If you haven't called move_task yet, call move_task(task_id, column=\"in-progress\") BEFORE entering plan mode. This is mandatory — plan mode IS work, and the task must be locked."
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/release-reminder.sh\"",
+						"timeout": 10
+					}
+				]
+			},
+			{
+				"matcher": "mcp__kanclaw__get_task",
+				"hooks": [
+					{
+						"type": "prompt",
+						"prompt": "You just loaded a KanClaw task. If you intend to work on this task, your VERY NEXT action MUST be move_task(task_id, column=\"in-progress\") — before any code reading, analysis, planning, or implementation. This is a locking mechanism to prevent concurrent agent work on the same task. If the task is already in-progress (check the status field in the response), you may proceed directly."
+					}
+				]
+			},
+			{
+				"matcher": "ExitPlanMode",
+				"hooks": [
+					{
+						"type": "prompt",
+						"prompt": "You just exited plan mode. If the user accepted your plan AND you are working on a KanClaw task, you MUST immediately post the full accepted plan as a markdown comment on that task using add_comment(task_id, content). Format: '## Plan\\n\\n[full plan content with all steps, files, and decisions]'. This is mandatory — every accepted plan must be recorded on the task for audit trail and cross-agent context. If the plan was not accepted (user rejected or abandoned), skip this."
+					}
+				]
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "prompt",
+						"prompt": "Check if you used any KanClaw MCP tools (move_task, add_comment, etc.) during this session. If you moved a task to 'in-progress' but never moved it to 'review' or 'done', remind the user in 1-2 sentences to update the task status and add a comment summarizing progress. If no KanClaw tasks were worked on, say nothing."
+					}
+				]
+			}
+		]
+	}
 }

@@ -1,20 +1,13 @@
 {
-  "name": "kanclaw",
-  "version": "0.1.0",
-  "description": "AI agent orchestration via Kanban board — task management, worktrees, releases, and multi-agent coordination",
-  "author": {
-    "name": "KanClaw Team",
-    "url": "https://kanclaw.com"
-  },
-  "homepage": "https://kanclaw.com",
-  "repository": "https://github.com/hectorros/kanclaw-plugin",
-  "license": "MIT",
-  "keywords": [
-    "kanban",
-    "task-management",
-    "mcp",
-    "agent-orchestration",
-    "worktree",
-    "multi-agent"
-  ]
+	"name": "kanclaw",
+	"version": "0.1.0",
+	"description": "AI agent orchestration via Kanban board — task management, worktrees, releases, and multi-agent coordination",
+	"author": {
+		"name": "KanClaw Team",
+		"url": "https://kanclaw.com"
+	},
+	"homepage": "https://kanclaw.com",
+	"repository": "https://github.com/kanclaw/claude-plugins",
+	"license": "MIT",
+	"keywords": ["kanban", "task-management", "mcp", "agent-orchestration", "worktree", "multi-agent"]
 }
