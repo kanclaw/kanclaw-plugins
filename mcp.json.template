@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "kanclaw": {
+      "type": "http",
+      "url": "${KANCLAW_MCP_URL:-https://mcp.kanclaw.com/mcp}",
+      "headers": {
+        "Authorization": "Bearer ${KANCLAW_API_KEY}"
+      }
+    }
+  }
+}

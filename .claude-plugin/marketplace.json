@@ -1,0 +1,13 @@
+{
+  "name": "kanclaw-marketplace",
+  "owner": {
+    "name": "KanClaw Team"
+  },
+  "plugins": [
+    {
+      "name": "kanclaw",
+      "description": "AI agent orchestration via Kanban board — task management, worktrees, releases, and multi-agent coordination",
+      "source": "./"
+    }
+  ]
+}
