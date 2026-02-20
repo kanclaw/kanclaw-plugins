@@ -57,8 +57,9 @@
 			{
 				"hooks": [
 					{
-						"type": "prompt",
-						"prompt": "Check if you used any KanClaw MCP tools (move_task, add_comment, etc.) during this session. If you moved a task to 'in-progress' but never moved it to 'review' or 'done', remind the user in 1-2 sentences to update the task status and add a comment summarizing progress. If no KanClaw tasks were worked on, say nothing."
+						"type": "command",
+						"command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/stop-reminder.sh\"",
+						"timeout": 10
 					}
 				]
 			}
