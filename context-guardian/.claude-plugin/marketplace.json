@@ -1,0 +1,28 @@
+{
+	"name": "context-guardian",
+	"description": "Graceful context wind-down with session handoff for Claude Code",
+	"owner": {
+		"name": "KanClaw Team"
+	},
+	"plugins": [
+		{
+			"name": "context-guardian",
+			"source": "./",
+			"hooks": {
+				"StatusLine": [
+					{
+						"command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/statusline.cjs\"",
+						"timeout": 2000
+					}
+				],
+				"PostToolUse": [
+					{
+						"command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/post-tool-check.cjs\"",
+						"matcher": "*",
+						"timeout": 1000
+					}
+				]
+			}
+		}
+	]
+}

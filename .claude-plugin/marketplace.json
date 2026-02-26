@@ -8,6 +8,11 @@
 			"name": "kanclaw",
 			"description": "AI agent orchestration via Kanban board — task management, worktrees, releases, and multi-agent coordination",
 			"source": "./"
+		},
+		{
+			"name": "context-guardian",
+			"description": "Graceful context wind-down with session handoff — escalating warnings, handoff files, and continuation prompts",
+			"source": "./context-guardian/"
 		}
 	]
 }
