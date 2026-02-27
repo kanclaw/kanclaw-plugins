@@ -2,6 +2,12 @@
 # KanClaw PostToolUse hook (matcher: Bash)
 # Detects git push and reminds about creating releases
 
+# Guard: if CWD was deleted (e.g., worktree cleanup), exit cleanly
+if [ ! -d "$(pwd)" ]; then
+    echo '{"continue":true,"suppressOutput":true}'
+    exit 0
+fi
+
 # Read hook context from stdin
 INPUT=$(cat)
 

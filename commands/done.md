@@ -10,6 +10,8 @@ Wrap up work on the current KanClaw task: commit, PR, move to review.
 
 ## Prerequisites
 
+**Flow detection:** If the `KANCLAW_TASK_ID` environment variable is set, this session is managed by `kanclaw-flow`. Tell the user: "This session is managed by kanclaw-flow — the CLI handles commit, PR, and task status automatically. Use `/done` only in standalone worktree sessions (not spawned by Flow)." Then stop — do not proceed with any steps below.
+
 This command expects a `.kanclaw-task` file in the current directory. If not found, tell the user this command only works in a worktree created by `/kanclaw:worktree`.
 
 ## Steps

@@ -72,7 +72,7 @@ Restart Claude Code and run `/mcp` — you should see `kanclaw · connected`.
 | **Skill** `/kanclaw` | Full workflow guide — task lifecycle, epics, releases, dependencies, checklists, labels, human handoff, context docs |
 | **Command** `/setup-kc` | One-step MCP onboarding — generates `.mcp.json` with your API key |
 | **Command** `/worktree` | Create a git worktree for a task — branch, context file, auto in-progress |
-| **Command** `/done` | Finish a task — commit, PR, review, worktree cleanup |
+| **Command** `/done` | Finish a task — commit, PR, review, worktree cleanup (standalone only, skipped in Flow) |
 | **Command** `/pr` | Lightweight PR creation with KanClaw task linking |
 | **6 Hooks** | Session context, task locking, plan documentation, release reminders, status checks |
 
@@ -112,6 +112,7 @@ Finish the current task (requires `.kanclaw-task` in working directory).
 
 - Commits changes, creates PR via `gh`, links PR on task, moves to review
 - Offers worktree cleanup
+- **Skipped in Flow sessions** — if `KANCLAW_TASK_ID` is set (agent spawned by `kanclaw-flow`), the CLI handles the full lifecycle automatically
 
 ### `/pr`
 
@@ -133,7 +134,7 @@ Create a PR with KanClaw context (lighter than `/done` — no status change).
 
 ## MCP Tools Overview
 
-The KanClaw MCP server provides **37 tools** and **3 resources**:
+The KanClaw MCP server provides **40 tools** and **3 resources**:
 
 | Category | Count | Key tools |
 |----------|-------|-----------|

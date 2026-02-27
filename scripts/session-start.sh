@@ -3,6 +3,12 @@
 # Outputs JSON per Claude Code hook protocol
 # Note: grep-based .mcp.json check is intentional — jq may not be installed
 
+# Guard: if CWD was deleted (e.g., worktree cleanup), exit cleanly
+if [ ! -d "$(pwd)" ]; then
+    echo '{"continue":true,"suppressOutput":true}'
+    exit 0
+fi
+
 PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
 
 # Sanitize a string for safe JSON embedding (escape backslashes, quotes, newlines)

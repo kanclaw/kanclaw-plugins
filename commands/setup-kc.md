@@ -56,8 +56,21 @@ Write the file to the project root using the Write tool. Pretty-print with 2-spa
 Tell the user:
 - `.mcp.json` has been created/updated with the KanClaw MCP server
 - `.mcp.json` is gitignored (contains secrets) — never commit it
-- **Restart Claude Code** for the MCP server to connect (MCP config is loaded at startup)
-- After restart, KanClaw tools like `get_board`, `list_tasks`, `move_task` will be available
+
+Then display this restart notice prominently — it MUST stand out from the rest of the output:
+
+---
+
+⚠️ **RESTART REQUIRED**
+
+MCP config is loaded at startup. To connect to the KanClaw board:
+
+1. Type `/exit` to quit Claude Code
+2. Relaunch Claude Code in this project directory
+
+After restart, KanClaw tools like `get_board`, `list_tasks`, and `move_task` will be available.
+
+---
 
 ## Notes
 

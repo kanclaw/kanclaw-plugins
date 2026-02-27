@@ -1,128 +1,66 @@
 ---
 name: kanclaw
-description: "KanClaw — AI-native Kanban board via MCP. Activates at session start when working on tasks from a KanClaw board. Use this skill when working on any project that uses KanClaw for task management. Guides task lifecycle (create, move, complete), epic management, labels, releases, checklists, agent coordination, human handoff, comments, and context docs. Activate when: interacting with KanClaw MCP tools, managing tasks on a board, coordinating with other agents, requesting human input, or shipping releases."
+description: "KanClaw AI Kanban via MCP. Use when managing tasks, coordinating agents, or shipping releases."
 ---
 
 # KanClaw
 
-Kanban board for AI agent orchestration via MCP. Each API key is scoped to one project + optional agent role.
+AI Kanban board via MCP. API key = one project + optional agent role.
 
 ## Setup
 
-MCP must be configured. Run `/setup-kc` or create `.mcp.json`:
+MCP config in `.mcp.json`:
 ```json
 { "mcpServers": { "kanclaw": { "type": "http", "url": "https://mcp.kanclaw.com/mcp", "headers": { "Authorization": "Bearer YOUR_API_KEY" } } } }
 ```
-API keys: **Project Settings → API Keys** at kanclaw.com. Restart Claude Code after writing `.mcp.json`.
+Get API keys at **Project Settings** on kanclaw.com. Restart Claude Code after changes.
 
 ## Core Rules
 
-**Columns:** `backlog` → `todo` → `in-progress` → `review` → `done` | **Priorities:** `critical` > `high` > `medium` > `low`
+**Columns:** `backlog` > `todo` > `in-progress` > `review` > `done` | **Priorities:** `critical` > `high` > `medium` > `low`
 
-### CRITICAL: move_task FIRST, work SECOND
-The moment you decide to work on a task, `move_task` to `in-progress` BEFORE any analysis, planning, research, or code changes. No exceptions. This is a locking mechanism — without it, another agent can pick the same task.
+**Reading** (`get_task`, `list_tasks`) is always allowed -- never refuse or stop after reading a task.
 
-**If you realize you started work without moving the task, STOP immediately, move it, then continue.**
+**Implementing** (writing code) requires `move_task` to `in-progress` first -- this is a lock to prevent concurrent agent work.
 
-### Planning protocol
-1. `move_task` to `in-progress` FIRST — before entering plan mode
-2. Enter plan mode, explore codebase, write plan
-3. On plan acceptance → `add_comment` the full plan on the task (mandatory)
-4. Begin implementation
+**Planning:** move to `in-progress` > plan > `add_comment` with plan > implement.
 
-### Picking up work
-1. `list_tasks(role=...)` — find tasks for your role
-2. `get_task` — read full description + comments
-3. `move_task` → `in-progress` IMMEDIATELY
-4. Work on the task
-5. `add_comment` with summary → `move_task` → `review`
+**Picking up work:** `list_tasks(role=...)` > `get_task` > `move_task` to `in-progress` > work > `add_comment` summary > `move_task` to `review`.
 
-Developer agents move to `review`, not `done`. Only user/QA moves to `done` — unless user explicitly asks.
+Agents move to `review`, not `done`. Only user/QA moves to `done` unless explicitly asked.
 
 ## Creating Tasks
 
-**Always check epics and roles first:**
-1. `list_epics` → find matching epic or `create_epic` if needed. Skip only for isolated one-offs.
-2. `list_roles` → assign correct role(s).
+1. `list_epics` + `list_roles` first
+2. `create_task` with title, description, priority, roles, labels, epic_id, checklist
+3. `manage_dependencies(action="add")` for blocked_by/blocks relationships
 
-**Always wire dependencies after creation:**
-1. `create_task` with title, description, priority, roles, labels, epic_id
-2. Immediately `manage_dependencies(action="add")` for any blocked_by/blocks relationships
-3. When creating multiple related tasks, establish the full dependency chain before moving on
+## Key Tools
 
-## Moving & Completing
-
-`move_task(task_id, column)` — column slugs use hyphens (`in-progress`). On invalid column, response includes `available_columns`.
-
-No `complete_task` shortcut — use `move_task` to the final column. Check `get_board` for available columns.
-
-## Human Handoff
-
-`request_human(task_id, prompt="Need clarification on X")` — sets `needs_human=true`. Continue other work while waiting.
-
-## Labels
-
-`manage_labels(action=...)` — list, create(name, color?), update(label_id), delete(label_id), reorder(label_ids).
-Assign via `create_task(labels=[...])` or `update_task(labels=[...])`. Filter: `list_tasks(label="slug")`.
-
-## Epics
-
-Group related tasks. `list_epics`, `create_epic`, `update_epic`, `delete_epic` (unlinks tasks, doesn't delete them).
-Link: `create_task(epic_id=...)` or `update_task(epic_id=...)`. Unlink: `update_task(epic_id=null)`.
-
-## Releases
-
-> **Every push to `main` creates a release.** Keeps board, git, and deploys in sync.
-
-`create_release(name, task_ids)` — groups done tasks into versioned snapshot, removes from board.
-`list_releases`, `get_release` for history.
-
-## Dependencies
-
-`manage_dependencies(action=...)` — add(blocked_by_task_id OR blocks_task_id), remove(dependency_id), list.
-Blocked = can't proceed until blocker reaches `done`. Cycles rejected via BFS.
-Filter: `list_tasks(blocked=true)` for bottlenecks. Check deps before picking up work.
-
-## Checklists
-
-`manage_checklist(action=...)` — add(title), toggle(item_id), update, delete, reorder.
-Progress shown in `list_tasks` as `checklist: "2/5"`.
-
-## Trash
-
-`delete_task` = soft-delete. `list_tasks(deleted=true)` to view. `restore_task` to recover.
-
-## Comments
-
-`add_comment` for decisions, progress, questions. `list_comments` for history. Agent role auto-attached.
-
-## Context Docs
-
-`get_role_context` — load your role's docs at session start.
-`list_docs`, `get_doc`, `update_doc` for project documentation.
+- **Move:** `move_task(task_id, column)` -- hyphens in slugs (`in-progress`). Invalid column returns `available_columns`.
+- **Human handoff:** `request_human(task_id, prompt)` -- sets `needs_human=true`.
+- **Labels:** `manage_labels(action=list|create|update|delete|reorder)`. Assign via `create_task(labels=[...])`.
+- **Epics:** `manage_epics(action=list|create|update|delete)`. Link via `epic_id` on tasks.
+- **Releases:** `manage_releases(action=list|get|create)`. Every push to `main` creates a release.
+- **Dependencies:** `manage_dependencies(action=add|remove|list)`. BFS cycle detection.
+- **Checklists:** `manage_checklist(action=add|add_many|toggle|update|delete|reorder)`. Batch with `create_task(checklist=[...])`.
+- **Comments:** `manage_comments(action=add|list)`. Agent role auto-attached.
+- **Trash:** `delete_task` (soft), `restore_task` to recover.
+- **Docs:** `get_role_context` at session start. `list_docs`, `get_doc`, `create_doc`, `update_doc`, `append_to_doc`, `delete_doc`.
+- **Board:** `get_board`, `manage_board(action=list|create|update|delete)`.
 
 ## Error Recovery
 
-- Wrong column → `move_task` again
-- Accidental delete → `list_tasks(deleted=true)` + `restore_task`
-- Wrong epic → `update_task(epic_id=correct)` or `epic_id=null`
-- Wrong dependency → `manage_dependencies(action="list")` + `action="remove"`
-- Overwritten description → check `get_task_history`
+Wrong column > `move_task` again | Accidental delete > `restore_task` | Wrong epic > `update_task(epic_id=...)` | Wrong dep > `manage_dependencies(action=remove)` | Lost description > `get_task_history`
 
 ## Session Pattern
 
-1. `get_role_context` — load project docs
-2. `get_board` — see board state
-3. `list_tasks(role=...)` — find your work
-4. Pick highest-priority unblocked task
-5. `move_task` → `in-progress`, work, `add_comment`, `move_task` → `review`
+1. `get_role_context` 2. `get_board` 3. `list_tasks(role=...)` 4. Pick highest-priority unblocked 5. Lock > work > comment > review
 
 ## Performance
 
-- `list_tasks` (compact) before `get_task` (full) — scan then drill down
-- Use filters: `column`, `role`, `epic`, `label`, `blocked`, `limit`
-- `get_board` = entire board — use only when needed
+`list_tasks` (compact) before `get_task` (full). Use filters: `column`, `role`, `epic`, `label`, `blocked`, `limit`.
 
 ## Tool Reference
 
-See [references/tools.md](references/tools.md) for all 37 tools + 3 resources with params and response shapes.
+See [references/tools.md](references/tools.md) for full tool params and response shapes.

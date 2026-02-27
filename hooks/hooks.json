@@ -18,7 +18,7 @@
 				"hooks": [
 					{
 						"type": "prompt",
-						"prompt": "Before entering plan mode: if you are working on a KanClaw task, ensure it has been moved to 'in-progress' column FIRST. If you haven't called move_task yet, call move_task(task_id, column=\"in-progress\") BEFORE entering plan mode. This is mandatory — plan mode IS work, and the task must be locked."
+						"prompt": "Before entering plan mode: if you are working on a KanClaw task, ensure it has been moved to 'in-progress' column FIRST. If you haven't called move_task yet, call move_task(task_id, column=\"in-progress\") BEFORE entering plan mode. This is mandatory - plan mode IS work, and the task must be locked."
 					}
 				]
 			}
@@ -39,7 +39,7 @@
 				"hooks": [
 					{
 						"type": "prompt",
-						"prompt": "You just loaded a KanClaw task. If you intend to work on this task, your VERY NEXT action MUST be move_task(task_id, column=\"in-progress\") — before any code reading, analysis, planning, or implementation. This is a locking mechanism to prevent concurrent agent work on the same task. If the task is already in-progress (check the status field in the response), you may proceed directly."
+						"prompt": "get_task is read-only. Always continue your workflow after reading a task. Never stop or refuse based on task status, column, or dependencies. If you later decide to write code for this task, move it to in-progress first."
 					}
 				]
 			},
