@@ -9,20 +9,19 @@ if [ ! -d "$(pwd)" ]; then
     exit 0
 fi
 
-PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
-
 # Sanitize a string for safe JSON embedding (escape backslashes, quotes, newlines)
 json_escape() {
     printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\n/\\n/g'
 }
 
 # Determine message based on MCP config state
+# Check CWD only — no git commands needed
 if [ -f ".kanclaw-task" ]; then
     TASK_ID=$(tr -d '[:space:]' < .kanclaw-task)
     TASK_ID=$(json_escape "$TASK_ID")
     CONTEXT="KanClaw: Resuming task ${TASK_ID}. Load context with get_task(task_id=\"${TASK_ID}\"). Ensure the task is in-progress before starting work."
     DISPLAY="KanClaw: Resuming task ${TASK_ID}"
-elif [ -f "${PROJECT_ROOT}/.mcp.json" ] && grep -q '"kanclaw"' "${PROJECT_ROOT}/.mcp.json" 2>/dev/null; then
+elif [ -f ".mcp.json" ] && grep -q '"kanclaw"' ".mcp.json" 2>/dev/null; then
     CONTEXT="KanClaw: MCP connected. Use get_board to see current tasks."
     DISPLAY="KanClaw: MCP connected"
 else
